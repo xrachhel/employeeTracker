@@ -15,38 +15,41 @@ connection.connect(function (err) {
     console.log("connected as id " + connection.threadId);
 });
 
-inquirer.prompt([
-    {
-        type: "list",
-        message: "What would you like to do?",
-        name: "action",
-        choices: ["View All Employees", "View All Employees By Department", "View All Employees by Manager", "Add Employee", "Remove Employee", "Update Employee Role", "Update Employee Manager"]
-    }
-]).then(function (res) {
-    switch (res.action) {
-        case "View All Employees":
-            viewAll();
-            break;
-        case "View All Employees By Department":
-            viewDept();
-            break;
-        case "View All Employees by Roles":
-            viewRole();
-            break;
-        case "Add Employee":
-            addEmployee();
-            break;
-        case "Add Department":
-            addDept();
-            break;
-        case "Add Role":
-            addRole();
-            break;
-        case "Update Employee Role":
-            updateEmployee();
-            break;
-    }
-})
+function start(){
+    inquirer.prompt([
+        {
+            type: "list",
+            message: "What would you like to do?",
+            name: "action",
+            choices: ["View All Employees", "View All Employees By Department", "View All Employees by Manager", "Add Employee", "Remove Employee", "Update Employee Role", "Update Employee Manager"]
+        }
+    ]).then(function (res) {
+        switch (res.action) {
+            case "View All Employees":
+                viewAll();
+                break;
+            case "View All Employees By Department":
+                viewDept();
+                break;
+            case "View All Employees by Roles":
+                viewRole();
+                break;
+            case "Add Employee":
+                addEmployee();
+                break;
+            case "Add Department":
+                addDept();
+                break;
+            case "Add Role":
+                addRole();
+                break;
+            case "Update Employee Role":
+                updateEmployee();
+                break;
+        }
+    })
+}
+
 
 function viewAll(){
     

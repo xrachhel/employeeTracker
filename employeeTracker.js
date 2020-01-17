@@ -58,7 +58,7 @@ function start() {
 
 // View list of all employees
 function viewAll() {
-    connection.query("SELECT employee.first_name, employee.last_name, role.title, role.salary, department.department FROM employee INNER JOIN role on role.id = employee.role_id INNER JOIN department on department.id = role.department_id", function (err, res) {
+    connection.query("SELECT employee.first_name, employee.last_name, role.title, role.salary, department.department, CONCAT(e.first_name, ' ' ,e.last_name) AS Manager FROM employee INNER JOIN role on role.id = employee.role_id INNER JOIN department on department.id = role.department_id left join employee e on employee.manager_id = e.id;", function (err, res) {
         if (err) throw err
 
         console.table(res)
@@ -192,6 +192,10 @@ function addEmployee() {
             last_name: answers.lastName,
             manager_id: managerId,
             role_id: roleId
+        }, function(err){
+            if (err) throw err
+            console.log("Added Employee!")
+            start()
         })
 
     })
@@ -263,7 +267,21 @@ function updateEmployee() {
                 }
             }
         ]).then(function(answer){
-
+            var roleId = readRoles().indexOf(answer.role) + 1
+            connection.query("UPDATE employee SET ? WHERE ? ", 
+            [
+                {
+                    role_id: roleId
+                },
+                {
+                    first_name: answer.employee
+                }
+            ], 
+            function(err, res){
+                if(err) throw err
+                console.log("Updated Role!")
+                start()
+            })
         })
     })
 

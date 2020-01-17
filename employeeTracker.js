@@ -3,6 +3,7 @@ var mysql = require("mysql")
 var inquirer = require("inquirer")
 var cTable = require("console.table")
 
+// Create connection for the sql database
 var connection = mysql.createConnection({
     host: "localhost",
     port: 3306,
@@ -10,12 +11,14 @@ var connection = mysql.createConnection({
     password: "password",
     database: "employee_trackerDB"
 })
+// Connect to mysql server and database
 connection.connect(function (err) {
     if (err) throw err
     console.log("connected as id " + connection.threadId);
     start()
 });
 
+// function which prompts the user for what action they should take
 function start() {
     inquirer.prompt([
         {
@@ -53,7 +56,7 @@ function start() {
     })
 }
 
-
+// View list of all employees
 function viewAll() {
     connection.query("SELECT employee.first_name, employee.last_name, role.title, role.salary, department.department FROM employee INNER JOIN role on role.id = employee.role_id INNER JOIN department on department.id = role.department_id", function (err, res) {
         if (err) throw err
@@ -64,6 +67,7 @@ function viewAll() {
 
 }
 
+// View list of employees by department
 function viewDept() {
     connection.query("SELECT * FROM department", function (err, res) {
         if (err) throw err
@@ -91,13 +95,13 @@ function viewDept() {
                 }
                 console.table(deptArr)
                 start()
-                // console.log(res)
             })
         })
     })
 
 }
 
+// View list of employees by role
 function viewRole() {
     connection.query("SELECT * FROM role", function (err, res) {
         if (err) throw err
@@ -128,24 +132,34 @@ function viewRole() {
             })
         })
     })
-    
+
 }
 
-// function readRoles() {
-//         connection.query("SELECT * FROM role", function(err, res) {
-//             if (err) throw err;
-//             return res;
-//         })
-//     }
+function readRoles() {
+    var roleArr = []
+    connection.query("SELECT * FROM role", function (err, res) {
+        if (err) throw err;
+        for (var i = 0; i < res.length; i++) {
+            roleArr.push(res[i].title)
+        }
 
+    })
+    return roleArr
+}
+
+function readManager() {
+    var managerArr = []
+    connection.query("SELECT first_name, last_name FROM employee WHERE manager_id IS NULL", function (err, res) {
+        if (err) throw err;
+        for (var i = 0; i < res.length; i++) {
+            managerArr.push(res[i].first_name)
+        }
+
+    })
+    return managerArr
+}
+// Add employee
 function addEmployee() {
-    // var result = readRoles()
-    // console.log(result)
-    // var roleArr = []
-    // for (var i = 0; i < result.length; i++){
-    //     choice = res[i].title
-    //     roleArr.push(choice)
-    // }
     inquirer.prompt([
         {
             type: "input",
@@ -157,27 +171,32 @@ function addEmployee() {
             name: "lastName",
             message: "What is the employee's last name?"
         },
-        // {
-        //     type: "list",
-        //     name: "role",
-        //     message: "What is the employee's role?",
-        //     choices: 
-        // },
-        // {
-        //     type: "list",
-        //     name: "manager",
-        //     message: "Who is the employee's manager?",
-        //     // choices: //AHHLKDFJLSD:KFJ:OISDHKFJIULKJSDBFLjk
-        // }
+        {
+            type: "list",
+            name: "role",
+            message: "What is the employee's role?",
+            choices: readRoles()
+        },
+        {
+            type: "list",
+            name: "manager",
+            message: "Who is the employee's manager?",
+            choices: readManager()
+        }
     ]).then(function (answers) {
-        connection.query("INSERT INTO employee SET ?", {
-            first_name: answers.firstName,
-            last_name: answers.lastName
-        })
+        var index = choices[2].indexOf(answers.role)
+        console.log(index)
+        // connection.query("INSERT INTO employee SET ?", {
+        //     first_name: answers.firstName,
+        //     last_name: answers.lastName,
+        //     manager_id: 
+        //     role_id: 
+        // })
 
     })
 }
 
+// Add department
 function addDept() {
     inquirer.prompt([
         {
@@ -195,6 +214,7 @@ function addDept() {
     })
 }
 
+// Add role
 function addRole() {
     inquirer.prompt([
         {
@@ -211,21 +231,41 @@ function addRole() {
     })
 }
 
+// Update an employee's role
 function updateEmployee() {
-    inquirer.prompt([
-        {
-            type: "list",
-            name: "employee",
-            message: "Which employee's role do you want to update?",
-            // choices: SLDKFJSD
-        },
-        {
-            type: "list",
-            name: "role",
-            message: "Which role do you want to assign the selected employee?",
-            // choices: aldksfjadf
-        }
-    ])
+    connection.query("SELECT employee.first_name, role.title FROM employee INNER JOIN role on role.id = employee.role_id ", function (err, res) {
+        if (err) throw err;
+
+        inquirer.prompt([
+            {
+                type: "list",
+                name: "employee",
+                message: "Which employee's role do you want to update?",
+                choices: function () {
+                    var employeeArr = []
+                    for (var i = 0; i < res.length; i++) {
+                        employeeArr.push(res[i].first_name)
+                    }
+                    return employeeArr
+                }
+            },
+            {
+                type: "list",
+                name: "role",
+                message: "Which role do you want to assign the selected employee?",
+                choices: function () {
+                    var roleArr = []
+                    for (var i = 0; i < res.length; i++) {
+                        roleArr.push(res[i].title)
+                    }
+                    return roleArr
+                }
+            }
+        ]).then(function(answer){
+
+        })
+    })
+
 }
 
 

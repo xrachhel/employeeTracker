@@ -125,14 +125,27 @@ function viewRole() {
                 }
                 console.table(roleArr)
                 start()
-                // console.log(res)
             })
         })
     })
     
 }
 
+// function readRoles() {
+//         connection.query("SELECT * FROM role", function(err, res) {
+//             if (err) throw err;
+//             return res;
+//         })
+//     }
+
 function addEmployee() {
+    // var result = readRoles()
+    // console.log(result)
+    // var roleArr = []
+    // for (var i = 0; i < result.length; i++){
+    //     choice = res[i].title
+    //     roleArr.push(choice)
+    // }
     inquirer.prompt([
         {
             type: "input",
@@ -144,18 +157,18 @@ function addEmployee() {
             name: "lastName",
             message: "What is the employee's last name?"
         },
-        {
-            type: "list",
-            name: "role",
-            message: "What is the employee's role?",
-            // choices: asdfdsf
-        },
-        {
-            type: "list",
-            name: "manager",
-            message: "Who is the employee's manager?",
-            // choices: //AHHLKDFJLSD:KFJ:OISDHKFJIULKJSDBFLjk
-        }
+        // {
+        //     type: "list",
+        //     name: "role",
+        //     message: "What is the employee's role?",
+        //     choices: 
+        // },
+        // {
+        //     type: "list",
+        //     name: "manager",
+        //     message: "Who is the employee's manager?",
+        //     // choices: //AHHLKDFJLSD:KFJ:OISDHKFJIULKJSDBFLjk
+        // }
     ]).then(function (answers) {
         connection.query("INSERT INTO employee SET ?", {
             first_name: answers.firstName,
@@ -178,6 +191,7 @@ function addDept() {
         })
 
         console.log("Added Department")
+        start()
     })
 }
 
@@ -189,8 +203,11 @@ function addRole() {
             message: "What is the name of the role?"
         }
     ]).then(function (res) {
-        //asdfsdf
+        connection.query("INSERT INTO role SET?", {
+            title: res.role
+        })
         console.log("Added Role")
+        start()
     })
 }
 
@@ -210,6 +227,8 @@ function updateEmployee() {
         }
     ])
 }
+
+
 
 // function updateManager(){
 //     inquirer.prompt([

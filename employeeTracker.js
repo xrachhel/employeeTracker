@@ -134,9 +134,9 @@ function viewRole() {
     })
 
 }
-
+var roleArr = []
 function readRoles() {
-    var roleArr = []
+    
     connection.query("SELECT * FROM role", function (err, res) {
         if (err) throw err;
         for (var i = 0; i < res.length; i++) {
@@ -147,8 +147,9 @@ function readRoles() {
     return roleArr
 }
 
+var managerArr = []
 function readManager() {
-    var managerArr = []
+   
     connection.query("SELECT first_name, last_name FROM employee WHERE manager_id IS NULL", function (err, res) {
         if (err) throw err;
         for (var i = 0; i < res.length; i++) {
@@ -184,14 +185,14 @@ function addEmployee() {
             choices: readManager()
         }
     ]).then(function (answers) {
-        var index = choices[2].indexOf(answers.role)
-        console.log(index)
-        // connection.query("INSERT INTO employee SET ?", {
-        //     first_name: answers.firstName,
-        //     last_name: answers.lastName,
-        //     manager_id: 
-        //     role_id: 
-        // })
+        var roleId = readRoles().indexOf(answers.role) + 1
+        var managerId = readManager().indexOf(answers.manager) + 1
+        connection.query("INSERT INTO employee SET ?", {
+            first_name: answers.firstName,
+            last_name: answers.lastName,
+            manager_id: managerId,
+            role_id: roleId
+        })
 
     })
 }

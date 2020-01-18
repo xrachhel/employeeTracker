@@ -153,7 +153,7 @@ function readManager() {
     connection.query("SELECT first_name, last_name FROM employee WHERE manager_id IS NULL", function (err, res) {
         if (err) throw err;
         for (var i = 0; i < res.length; i++) {
-            managerArr.push(res[i].first_name)
+            managerArr.push(res[i].first_name + " " + res[i].last_name)
         }
 
     })
@@ -289,31 +289,4 @@ function updateEmployee() {
 
 
 
-// function updateManager(){
-//     inquirer.prompt([
-//         {
-//             type: "list",
-//             name: "manager",
-//             message: "Which employee's manager do you want to update?",
-//             // choices: aklsdjfhaljksdf
-//         },
-//         {
-//             type: "list",
-//             name: "employee",
-//             message: "Which employee do you want to set as manager for the selected employee?",
-//             // choices: kljdalhfsdf
-//         }
-//     ])
-// }
 
-
-// function removeEmployee(){
-//     inquirer.prompt([
-//         {
-//             type: "list",
-//             name: "employee",
-//             message: "Which employee do you want to remove?",
-//             // choices: alksdfjasdf
-//         }
-//     ])
-// }

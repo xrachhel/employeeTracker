@@ -16,15 +16,41 @@ This application is a Content Management System interface, which is built for no
 ## Demo
 1. Navigate into employeeTracker file in terminal
 2. run 'npm install' to install dependencies (express, mysql, console.table) needed for this application
-3. Run 'npm start' in terminal, a message saying 'connected as ____' will be displayed. This means the application is running in your terminal.
+3. Run 'node employeeTracker.js' in terminal, a message saying 'connected as ____' will be displayed. This means the application is running in your terminal.
 
 
-![gif](public/assets/siteDemo.gif)
+![gif](assets/siteDemo.gif)
 
 
 ## Code Snippet
 
 ```
+var roleArr = []
+function readRoles() {
+    
+    connection.query("SELECT * FROM role", function (err, res) {
+        if (err) throw err;
+        for (var i = 0; i < res.length; i++) {
+            roleArr.push(res[i].title)
+        }
+
+    })
+    return roleArr
+}
+
+var managerArr = []
+function readManager() {
+   
+    connection.query("SELECT first_name, last_name FROM employee WHERE manager_id IS NULL", function (err, res) {
+        if (err) throw err;
+        for (var i = 0; i < res.length; i++) {
+            managerArr.push(res[i].first_name + " " + res[i].last_name)
+        }
+
+    })
+    return managerArr
+}
+
 function addEmployee() {
     inquirer.prompt([
         {
@@ -67,7 +93,7 @@ function addEmployee() {
 }
 
 ```
-This portion of the script file displays the API route for posting a new note using express. 'app.post' is used to handle POST requests (a 'body parser' is needed to handle POST requests- lines 1-2). The variable 'newNote' is given the value of 'req.body', which is an object containing text from the parsed request body. 'db.json', which is a json file containing all the notes, is read and this data is parsed in order for it to become a Javascript object. 'newNote' is then pushed into the JSON data array, and each post is given an ID so a note with a specific ID can then be deleted later on. 
+This portion of the script file displays the function for the user to add an employee into the database. The first two questions in the prompt are inputs, but asking for the employee's role and manager requires a list of existing roles and managers from the database to be shown. In order to do that, seperate functions had to be written to make a query and read all the role and manager names from the role and employee table respectively. In those two functions, all the names were pushed into an array, which could then be displayed as a list in the prompt. After all the questions are answered, the index of (+1) the role and manager picked were set into the employee table using the query, since the employee table requires a 'role id' and a 'manager id'. The initial prompts are run at the end of the function so users can call for other functions.
 
 ## Authors
 

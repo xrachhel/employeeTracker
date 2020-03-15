@@ -52,9 +52,9 @@ function start() {
                 break;
             case "Exit":
                 return;
-        }
-    })
-}
+        };
+    });
+};
 
 // View list of all employees
 function viewAll() {
@@ -63,9 +63,8 @@ function viewAll() {
 
         console.table(res)
         start()
-    })
-
-}
+    });
+};
 
 // View list of employees by department
 function viewDept() {
@@ -95,11 +94,10 @@ function viewDept() {
                 }
                 console.table(deptArr)
                 start()
-            })
-        })
-    })
-
-}
+            });
+        });
+    });
+};
 
 // View list of employees by role
 function viewRole() {
@@ -127,13 +125,14 @@ function viewRole() {
                         roleArr.push(res[i])
                     }
                 }
-                console.table(roleArr)
-                start()
-            })
-        })
-    })
+                console.table(roleArr);
+                start();
+            });
+        });
+    });
+};
 
-}
+// Select types of roles from database
 var roleArr = []
 function readRoles() {
     
@@ -141,12 +140,12 @@ function readRoles() {
         if (err) throw err;
         for (var i = 0; i < res.length; i++) {
             roleArr.push(res[i].title)
-        }
-
-    })
+        };
+    });
     return roleArr
-}
+};
 
+// Select managers from database
 var managerArr = []
 function readManager() {
    
@@ -154,11 +153,11 @@ function readManager() {
         if (err) throw err;
         for (var i = 0; i < res.length; i++) {
             managerArr.push(res[i].first_name + " " + res[i].last_name)
-        }
-
-    })
+        };
+    });
     return managerArr
-}
+};
+
 // Add employee
 function addEmployee() {
     inquirer.prompt([
@@ -196,10 +195,9 @@ function addEmployee() {
             if (err) throw err
             console.log("Added Employee!")
             start()
-        })
-
-    })
-}
+        });
+    });
+};
 
 // Add department
 function addDept() {
@@ -213,11 +211,10 @@ function addDept() {
         connection.query("INSERT INTO department SET ?", {
             department: res.department
         })
-
         console.log("Added Department")
-        start()
-    })
-}
+        start();
+    });
+};
 
 // Add role
 function addRole() {
@@ -232,11 +229,11 @@ function addRole() {
             title: res.role
         })
         console.log("Added Role")
-        start()
-    })
-}
+        start();
+    });
+};
 
-// Update an employee's role
+// Update employee's role
 function updateEmployee() {
     connection.query("SELECT employee.first_name, role.title FROM employee INNER JOIN role on role.id = employee.role_id ", function (err, res) {
         if (err) throw err;
@@ -246,6 +243,7 @@ function updateEmployee() {
                 type: "list",
                 name: "employee",
                 message: "Which employee's role do you want to update?",
+                // Choice data from MySQL query
                 choices: function () {
                     var employeeArr = []
                     for (var i = 0; i < res.length; i++) {
@@ -258,6 +256,7 @@ function updateEmployee() {
                 type: "list",
                 name: "role",
                 message: "Which role do you want to assign the selected employee?",
+                // Choice data from MySQL query
                 choices: function () {
                     var roleArr = []
                     for (var i = 0; i < res.length; i++) {
@@ -280,13 +279,8 @@ function updateEmployee() {
             function(err, res){
                 if(err) throw err
                 console.log("Updated Role!")
-                start()
-            })
-        })
-    })
-
-}
-
-
-
-
+                start();
+            });
+        });
+    });
+};
